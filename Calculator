@@ -1,0 +1,72 @@
+import tkinter as tk
+from tkinter import messagebox
+
+class Calculator:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Simple Calculator")
+        self.root.resizable(False, False)
+
+        self.expression = ""
+
+        self.input_text = tk.StringVar()
+
+        self.create_widgets()
+
+    def create_widgets(self):
+        input_frame = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
+        input_frame.pack(pady=10)
+
+        input_field = tk.Entry(input_frame, font=('Arial', 18), textvariable=self.input_text, width=25, bd=5, relief=tk.FLAT, justify='right')
+        input_field.grid(row=0, column=0)
+        input_field.pack()
+
+        btns_frame = tk.Frame(self.root)
+        btns_frame.pack()
+
+        # Button Layout
+        buttons = [
+            ('7', '8', '9', '/'),
+            ('4', '5', '6', '*'),
+            ('1', '2', '3', '-'),
+            ('0', '.', '=', '+'),
+        ]
+
+        for row_index, row in enumerate(buttons):
+            for col_index, symbol in enumerate(row):
+                button = tk.Button(btns_frame, text=symbol, width=5, height=2, font=('Arial', 16),
+                                   command=lambda s=symbol: self.on_button_click(s))
+                button.grid(row=row_index, column=col_index, padx=5, pady=5)
+
+        clear_btn = tk.Button(self.root, text="Clear", font=('Arial', 14), width=22, bg="red", fg="white",
+                              command=self.clear)
+        clear_btn.pack(pady=10)
+
+    def on_button_click(self, char):
+        if char == "=":
+            self.calculate()
+        else:
+            self.expression += str(char)
+            self.input_text.set(self.expression)
+
+    def calculate(self):
+        try:
+            result = str(eval(self.expression))
+            self.input_text.set(result)
+            self.expression = result
+        except ZeroDivisionError:
+            self.input_text.set("Cannot divide by 0")
+            self.expression = ""
+        except Exception:
+            self.input_text.set("Error")
+            self.expression = ""
+
+    def clear(self):
+        self.expression = ""
+        self.input_text.set("")
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    calculator = Calculator(root)
+    root.mainloop()
